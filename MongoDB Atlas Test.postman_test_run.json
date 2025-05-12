@@ -1,0 +1,254 @@
+{
+	"id": "dba99610-2586-4b5b-a14d-ee9251d3df91",
+	"name": "MongoDB Atlas Test",
+	"timestamp": "2025-05-11T23:59:09.641Z",
+	"collection_id": "42829025-0cf610a0-87f8-4922-b9e9-dcb82fccce30",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 8,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-05-11T23:59:04.148Z",
+	"totalFail": 2,
+	"results": [
+		{
+			"id": "fcaab238-8300-4472-8ee0-ed8a00906174",
+			"name": "Check correct work",
+			"url": "http://localhost:3000/api/data",
+			"time": 50,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				50
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "66cf2c6b-8c61-4d1c-8c54-a91b92e80b18",
+			"name": "Find listings with name containing “Charming”",
+			"url": "http://localhost:3000/api/listingsAndReviews/search/query?name=Charming",
+			"time": 652,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response schema is valid": true,
+				"All names contain 'Charming'": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response schema is valid": {
+					"pass": 1,
+					"fail": 0
+				},
+				"All names contain 'Charming'": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				652
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response schema is valid": true,
+					"All names contain 'Charming'": true
+				}
+			]
+		},
+		{
+			"id": "7b6b66c4-7ac2-4121-90a6-dc60ec106f99",
+			"name": "Find listings with price less than 100",
+			"url": "http://localhost:3000/api/listingsAndReviews/search/query?price[$lt]=100",
+			"time": 48,
+			"responseCode": {
+				"code": 500,
+				"name": "Internal Server Error"
+			},
+			"tests": {
+				"Should not return server error": false
+			},
+			"testPassFailCounts": {
+				"Should not return server error": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				48
+			],
+			"allTests": [
+				{
+					"Should not return server error": false
+				}
+			]
+		},
+		{
+			"id": "4f97abd9-9d5e-406b-add0-348804a20671",
+			"name": "Find listings located in Portugal",
+			"url": "http://localhost:3000/api/listingsAndReviews/search/query?address.country=Portugal",
+			"time": 2243,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"All listings are in Portugal": true
+			},
+			"testPassFailCounts": {
+				"All listings are in Portugal": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2243
+			],
+			"allTests": [
+				{
+					"All listings are in Portugal": true
+				}
+			]
+		},
+		{
+			"id": "aa588a50-4aeb-4a26-8ed2-73c5ac678ed7",
+			"name": "Find listings that accommodate at least 4 guests",
+			"url": "http://localhost:3000/api/listingsAndReviews/search/query?accommodates[$gte]=4",
+			"time": 62,
+			"responseCode": {
+				"code": 500,
+				"name": "Internal Server Error"
+			},
+			"tests": {
+				"Should not return 500": false
+			},
+			"testPassFailCounts": {
+				"Should not return 500": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				62
+			],
+			"allTests": [
+				{
+					"Should not return 500": false
+				}
+			]
+		},
+		{
+			"id": "39a20dbc-27b6-43a6-be8d-33a0af27273d",
+			"name": "Create a new doc",
+			"url": "http://localhost:3000/api/listingsAndReviews",
+			"time": 105,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status code is 201": true,
+				"Document created (insertedId exists)": true
+			},
+			"testPassFailCounts": {
+				"Status code is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Document created (insertedId exists)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				105
+			],
+			"allTests": [
+				{
+					"Status code is 201": true,
+					"Document created (insertedId exists)": true
+				}
+			]
+		},
+		{
+			"id": "600d6b2b-9a60-4c20-8168-cbfb47b7f761",
+			"name": "Update a new doc",
+			"url": "http://localhost:3000/api/listingsAndReviews/10009999",
+			"time": 54,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Document was updated": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Document was updated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				54
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Document was updated": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 3214,
+	"collection": {
+		"requests": [
+			{
+				"id": "fcaab238-8300-4472-8ee0-ed8a00906174",
+				"method": "GET"
+			},
+			{
+				"id": "66cf2c6b-8c61-4d1c-8c54-a91b92e80b18",
+				"method": "GET"
+			},
+			{
+				"id": "7b6b66c4-7ac2-4121-90a6-dc60ec106f99",
+				"method": "GET"
+			},
+			{
+				"id": "4f97abd9-9d5e-406b-add0-348804a20671",
+				"method": "GET"
+			},
+			{
+				"id": "aa588a50-4aeb-4a26-8ed2-73c5ac678ed7",
+				"method": "GET"
+			},
+			{
+				"id": "39a20dbc-27b6-43a6-be8d-33a0af27273d",
+				"method": "POST"
+			},
+			{
+				"id": "600d6b2b-9a60-4c20-8168-cbfb47b7f761",
+				"method": "PUT"
+			}
+		]
+	}
+}

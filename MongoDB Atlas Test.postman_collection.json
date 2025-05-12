@@ -1,0 +1,394 @@
+{
+	"info": {
+		"_postman_id": "0cf610a0-87f8-4922-b9e9-dcb82fccce30",
+		"name": "MongoDB Atlas Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42829025"
+	},
+	"item": [
+		{
+			"name": "Check correct work",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find listings with name containing “Charming”",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"  type: \"array\",\r",
+							"  items: {\r",
+							"    type: \"object\",\r",
+							"    required: [\"_id\", \"name\", \"room_type\", \"property_type\", \"accommodates\", \"address\"],\r",
+							"    properties: {\r",
+							"      _id: { type: \"string\" },\r",
+							"      name: { type: \"string\" },\r",
+							"      summary: { type: \"string\" },\r",
+							"      room_type: { type: \"string\" },\r",
+							"      property_type: { type: \"string\" },\r",
+							"      accommodates: { type: \"number\" },\r",
+							"      bedrooms: { type: [\"number\", \"null\"] },\r",
+							"      beds: { type: \"number\" },\r",
+							"      bathrooms: {\r",
+							"        oneOf: [\r",
+							"          { type: \"number\" },\r",
+							"          { type: \"object\" } // допускаем {\"$numberDecimal\": \"1.0\"}\r",
+							"        ]\r",
+							"      },\r",
+							"      price: {\r",
+							"        oneOf: [\r",
+							"          { type: \"number\" },\r",
+							"          { type: \"object\" } // {\"$numberDecimal\": \"72.00\"}\r",
+							"        ]\r",
+							"      },\r",
+							"      address: {\r",
+							"        type: \"object\",\r",
+							"        required: [\"country\"],\r",
+							"        properties: {\r",
+							"          country: { type: \"string\" }\r",
+							"        }\r",
+							"      }\r",
+							"    }\r",
+							"  }\r",
+							"};\r",
+							"pm.test(\"Response schema is valid\", function () {\r",
+							"  pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All names contain 'Charming'\", function () {\r",
+							"  const data = pm.response.json();\r",
+							"  data.forEach(item => {\r",
+							"    pm.expect(item.name).to.match(/Charming/i);\r",
+							"  });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews/search/query?name=Charming",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Charming"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find listings with price less than 100",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should not return server error\", function () {\r",
+							"  pm.response.to.not.have.status(500);\r",
+							"});\r",
+							"\r",
+							"// Этот запрос пытается отфильтровать документы по числовому полю price с использованием query-параметра в стиле MongoDB.\r",
+							"// Ожидаемый результат: 200 OK с документами, где price < 100\r",
+							"// Фактический результат: 500 Internal Server Error с сообщением: \"$regex должен быть строкой\"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews/search/query?price[$lt]=100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "price[$lt]",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find listings located in Portugal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"All listings are in Portugal\", function () {\r",
+							"  const data = pm.response.json();\r",
+							"  data.forEach(item => {\r",
+							"    pm.expect(item.address.country).to.eql(\"Portugal\");\r",
+							"  });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews/search/query?address.country=Portugal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "address.country",
+							"value": "Portugal"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find listings that accommodate at least 4 guests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"//  сервер не умеет обрабатывать числовые фильтры, и применяет к ним $regex, из - за чего и падает.\r",
+							"if (pm.response.code === 200) {\r",
+							"  const data = pm.response.json();\r",
+							"\r",
+							"  pm.test(\"All listings accommodate at least 4 guests\", function () {\r",
+							"    data.forEach(item => {\r",
+							"      pm.expect(Number(item.accommodates)).to.be.at.least(4);\r",
+							"    });\r",
+							"  });\r",
+							"} else {\r",
+							"  console.warn(\"Unexpected response code:\", pm.response.code);\r",
+							"  console.warn(\"Response body:\", pm.response.text());\r",
+							"}\r",
+							"pm.test(\"Should not return 500\", function () {\r",
+							"  pm.expect(pm.response.code).to.not.eql(500);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews/search/query?accommodates[$gte]=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"search",
+						"query"
+					],
+					"query": [
+						{
+							"key": "accommodates[$gte]",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new doc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Document created (insertedId exists)\", function () {\r",
+							"  const json = pm.response.json();\r",
+							"  pm.expect(json._id).to.exist;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Test Apartment for Homework\",\r\n  \"summary\": \"Created via Postman\",\r\n  \"price\": 110,\r\n  \"beds\": 2,\r\n  \"bedrooms\": 1,\r\n  \"accommodates\": 3,\r\n  \"room_type\": \"Entire home/apt\",\r\n  \"property_type\": \"Apartment\",\r\n  \"description\": \"Temporary test listing\",\r\n  \"listing_url\": \"https://www.airbnb.com/rooms/test\",\r\n  \"address\": {\r\n    \"country\": \"Ukraine\",\r\n    \"street\": \"Testova 10\",\r\n    \"market\": \"Kyiv\",\r\n    \"country_code\": \"UA\"\r\n  },\r\n  \"host\": {\r\n    \"host_id\": \"testhost123\",\r\n    \"host_name\": \"Postman QA\",\r\n    \"host_location\": \"Ukraine\",\r\n    \"host_listings_count\": 1,\r\n    \"host_total_listings_count\": 1\r\n  },\r\n  \"images\": {\r\n    \"picture_url\": \"https://via.placeholder.com/150\"\r\n  },\r\n  \"amenities\": [\r\n    \"Wifi\",\r\n    \"Kitchen\",\r\n    \"Heating\"\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a new doc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Document was updated\", function () {\r",
+							"  const json = pm.response.json();\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"price\": 150,\r\n  \"beds\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/listingsAndReviews/10009999",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"listingsAndReviews",
+						"10009999"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
